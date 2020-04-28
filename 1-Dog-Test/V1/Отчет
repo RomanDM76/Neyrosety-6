@@ -1,0 +1,60 @@
+Прогон 1 
+батч = 64
+
+Sample Prediction after epoch 5
+
+57/57 [==============================] - 319s 6s/step - loss: 0.2500 - accuracy: 0.8946 - val_loss: 0.2931 - val_accuracy: 0.8807
+
+Прогон 2
+батч = 128
+
+
+Прогон 3
+Было
+up_stack = [
+    pix2pix.upsample(512, 3),  # 4x4 -> 8x8
+    pix2pix.upsample(256, 3),  # 8x8 -> 16x16
+    pix2pix.upsample(128, 3),  # 16x16 -> 32x32
+    pix2pix.upsample(64, 3),   # 32x32 -> 64x64
+]
+
+
+Стало
+up_stack = [
+    pix2pix.upsample(512, 3),  # 4x4 -> 8x8
+    pix2pix.upsample(256, 3),  # 8x8 -> 16x16
+    pix2pix.upsample(128, 3),  # 16x16 -> 32x32
+    pix2pix.upsample(64, 3),   # 32x32 -> 64x64
+    pix2pix.upsample(32, 3)
+]
+
+Изменения мизерные
+потери чуть уменьшились
+точность чуть возрасла
+
+Прогон 4
+
+Стало
+up_stack = [
+    pix2pix.upsample(512, 3),  # 4x4 -> 8x8
+    pix2pix.upsample(256, 3),  # 8x8 -> 16x16
+    pix2pix.upsample(128, 3),  # 16x16 -> 32x32
+    pix2pix.upsample(64, 3),   # 32x32 -> 64x64
+    pix2pix.upsample(32, 3)
+    pix2pix.upsample(16, 3)
+]
+
+Прогон 5
+Используем оптимизатор SGD
+BUFFER_SIZE = 20000
+
+Результат резко ухудшился
+
+Прогон 6
+activation='tanh',
+model = unet_model(OUTPUT_CHANNELS)
+model.compile(optimizer='SGD',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  activation='tanh',
+              metrics=['accuracy'])
+
+
